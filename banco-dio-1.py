@@ -1,10 +1,55 @@
+import uuid
 from datetime import datetime
 
+
 def receive_input_value(operation:str)->float:
-    print(f"Digite o valor a ser {operation}")
+    print(f"Digite o valor a de {operation}")
     value = input()
     value = float(value.strip().replace(",", '.'))
-    return value
+    if (value > 0):
+        return value
+    else:
+        print(f"Digite um valor válido de {operation}")
+        return 0
+
+def cadastrar_usuario(conta_id:int,nome:str):
+    id_usuario = uuid.uuid4()
+    nome_usuario = nome
+    usuario = {nome_usuario:[conta_id]}
+    print(f"O usuario {nome_usuario} posssui a(s) conta(s) {usuario[nome_usuario]}")
+
+def cadastar_conta(conta_id:int,usuario:dict):
+    usuario
+
+def is_possible_to_saque(value:float,saldo:float,limite:float,num_saques:int)->bool:
+    if (value > saldo or value > limite or num_saques > 3 or value > 500):
+        print("Não é possível fazer essa operação")
+        return False
+    return True
+
+def saque(value: float, saldo:float,limite:float,num_saques):
+    cache_saldo = saldo
+    cache_limite = limite
+    cache_num_saques = num_saques
+
+    if is_possible_to_saque(value,saldo,limite,num_saques):
+        saldo -= value
+        limite -= value
+        num_saques += 1
+        return saldo, limite, num_saques
+    else:
+        return cache_saldo, cache_limite, cache_num_saques
+
+
+def deposita(value:float, saldo:float):
+    saldo+= value
+    return saldo
+
+def generate_extrato(saldo:float, limite:float):
+    print('--------------------')
+    print(f"Data e hora:  {datetime.now()}")
+    print(f"Valor em conta:  R${saldo}")
+    print(f"Valor possível de ser sacado no dia atual: R${limite}")
 
 
 limite = 1500
@@ -23,29 +68,16 @@ while menu_ativo:
     option  = int(input())
 
     if option == 1:
-        valor_sacado = receive_input_value("Sacado")
-        if(valor_sacado > 0):
-
-            if (valor_sacado > saldo or valor_sacado > limite or numero_saques> 3 or valor_sacado > 500):
-                print("Não é possível fazer essa operação")
-
-            else:
-                saldo -= valor_sacado
-                limite -= valor_sacado
-                numero_saques+=1
-        else:
-            print("Digite um valor válido de saque")
+        valor_sacado = receive_input_value("Saque")
+        saldo, limite, numero_saques = saque(valor_sacado,saldo,limite,numero_saques)
 
     if option == 2:
-        valor_depositado = receive_input_value("Depositado")
-        saldo += valor_depositado
+        valor_depositado = receive_input_value("Deposito")
+        saldo = deposita(valor_depositado, saldo)
 
 
     if option == 3:
-        print('--------------------')
-        print(f"Data e hora:  {datetime.now()}")
-        print(f"Valor em conta:  R${saldo}")
-        print(f"Valor possível de ser sacado no dia atual: R${limite}")
+        generate_extrato(saldo,limite)
 
 
     if option ==4:
